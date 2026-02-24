@@ -687,3 +687,48 @@ def test_single_queue_true():
     ):
         assert tu.single("pkg.installed", name="emacs", queue=True) == "result"
         check_queue_mock.assert_called_once()
+
+
+@pytest.mark.parametrize(
+    "executable,salt_call_cmd",
+    [
+        ("/usr/bin/python3", "salt-call"),
+        (
+            "/usr/lib/venv-salt-minion/bin/python",
+            "/usr/lib/venv-salt-minion/bin/salt-call",
+        ),
+    ],
+)
+def test_call_which_salt_call_selected_with_executable(executable, salt_call_cmd):
+    """Test transactional_update.chroot which salt-call used"""
+    utils_mock = MagicMock(return_value={"return": "result"})
+    salt_mock = {
+        "cmd.run_all": MagicMock(return_value={"retcode": 0, "stdout": ""}),
+    }
+    with (
+        patch("sys.executable", executable),
+        patch("salt.utils.json.find_json", utils_mock),
+        patch.dict(tu.__salt__, salt_mock),
+    ):
+        ret = tu.call("test.ping")
+        assert "result" in ret
+
+        salt_mock["cmd.run_all"].assert_called_with(
+            [
+                "transactional-update",
+                "--non-interactive",
+                "--drop-if-no-change",
+                "--no-selfupdate",
+                "--continue",
+                "--quiet",
+                "run",
+                salt_call_cmd,
+                "--out",
+                "json",
+                "-l",
+                "quiet",
+                "--no-return-event",
+                "--",
+                "test.ping",
+            ]
+        )
