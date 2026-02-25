@@ -19,7 +19,6 @@ def configure_loader_modules():
     return {
         tu: {
             "__salt__": {},
-            "__utils__": {"files.rm_rf": MagicMock()},
             "__pillar__": salt.loader.context.NamedLoaderContext("__pillar__", loader_context, {}),
             "__opts__": {"extension_modules": "", "cachedir": "/tmp/"},
         },
@@ -506,8 +505,13 @@ def test_sls_queue_true():
             "saltext.transactional_update.modules.transactional_update.call",
             MagicMock(return_value="result"),
         ),
+        patch(
+            "saltext.transactional_update.modules.transactional_update._check_queue",
+            MagicMock(return_value=None),
+        ) as check_queue_mock,
     ):
         assert tu.sls("module", queue=True) == "result"
+        check_queue_mock.assert_called_once()
 
 
 def test_sls_queue_false_failing():
@@ -575,8 +579,13 @@ def test_highstate_queue_true():
             "saltext.transactional_update.modules.transactional_update.call",
             MagicMock(return_value="result"),
         ),
+        patch(
+            "saltext.transactional_update.modules.transactional_update._check_queue",
+            MagicMock(return_value=None),
+        ) as check_queue_mock,
     ):
         assert tu.highstate(queue=True) == "result"
+        check_queue_mock.assert_called_once()
 
 
 def test_highstate_queue_false_failing():
@@ -672,5 +681,10 @@ def test_single_queue_true():
             "saltext.transactional_update.modules.transactional_update.call",
             MagicMock(return_value="result"),
         ),
+        patch(
+            "saltext.transactional_update.modules.transactional_update._check_queue",
+            MagicMock(return_value=None),
+        ) as check_queue_mock,
     ):
         assert tu.single("pkg.installed", name="emacs", queue=True) == "result"
+        check_queue_mock.assert_called_once()
