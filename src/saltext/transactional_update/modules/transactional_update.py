@@ -281,10 +281,12 @@ import salt.exceptions
 import salt.utils.args
 import salt.utils.json
 import salt.utils.path
-from salt.modules.state import _check_queue
-from salt.modules.state import _prior_running_states
-from salt.modules.state import _wait
-from salt.modules.state import running
+from salt.modules.state import (
+    _check_queue,
+    _prior_running_states,
+    _wait,
+    running,
+)
 
 __func_alias__ = {"apply_": "apply"}
 
