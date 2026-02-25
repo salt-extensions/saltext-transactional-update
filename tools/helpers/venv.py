@@ -2,8 +2,7 @@ import tempfile
 from pathlib import Path
 
 from . import prompt
-from .cmd import CommandNotFound
-from .cmd import local
+from .cmd import CommandNotFound, local
 from .copier import discover_project_name
 
 # Should follow the version used for relenv packages, see

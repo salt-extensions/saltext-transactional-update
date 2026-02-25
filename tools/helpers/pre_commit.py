@@ -1,9 +1,7 @@
 import re
 
 from . import prompt
-from .cmd import ProcessExecutionError
-from .cmd import git
-from .cmd import local
+from .cmd import ProcessExecutionError, git, local
 from .git import list_untracked
 
 PRE_COMMIT_TEST_REGEX = re.compile(
