@@ -1,4 +1,4 @@
-.. all-saltext.transactional-update.executors:
+.. all-saltext.transactional_update.executors:
 
 ________________
 Executor Modules
